@@ -1,0 +1,104 @@
+# Test Configuration for MES Module Integration Tests
+# Reference: epic-001.story-008-test-design-20260125.md
+
+spring:
+  # DataSource Configuration (使用 TestContainers)
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:8.0:///mes_test
+    username: test
+    password: test123
+    # HikariCP Configuration
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Validate schema against entities
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  # Flyway Configuration
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    clean-disabled: false  # Allow clean for tests
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    out-of-order: false
+
+  # Redis Configuration (使用嵌入式Redis用于测试)
+  redis:
+    host: localhost
+    port: 6379
+    database: 1
+    timeout: 6000ms
+
+  # Cache Configuration
+  cache:
+    type: simple  # 使用简单缓存用于测试
+
+# WeChat MP Configuration (test values to avoid bean creation failure)
+wx:
+  mp:
+    config-storage:
+      type: memory
+    configs:
+      - appId: test_app_id
+        secret: test_secret
+        token: test_token
+        aesKey: test_aes_key_32_characters_long
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    org.springframework.jdbc: DEBUG
+    org.springframework.transaction: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    cn.iocoder.yudao.module.mes: DEBUG
+    com.baomidou.mybatisplus: DEBUG
+    io.restassured: DEBUG
+
+# MyBatis-Plus Configuration
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# Test-specific Configuration
+test:
+  # Performance Test Targets (from test design)
+  performance:
+    material-list-4layer-max-ms: 800    # INT-022
+    batch-list-4layer-max-ms: 1000      # INT-023
+    type-filter-max-ms: 200             # INT-024
+    batch-generation-max-ms: 100        # INT-052
+
+  # Tenant Configuration for Multi-tenancy Tests
+  tenancy:
+    enabled: true
+    default-tenant-id: 1
+
+  # Test Data Configuration
+  data:
+    # Number of records for load testing
+    material-count: 1000
+    batch-count: 10000
+    concurrent-threads: 10

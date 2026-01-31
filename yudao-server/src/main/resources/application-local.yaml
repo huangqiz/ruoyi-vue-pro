@@ -1,6 +1,17 @@
 server:
   port: 48080
 
+--- #################### Spring Boot DevTools 热重载配置 ####################
+spring:
+  devtools:
+    restart:
+      enabled: true # 开启热重载
+      additional-paths: src/main/java # 监控的路径
+      exclude: static/**,public/**,templates/** # 排除不需要重启的资源
+    livereload:
+      enabled: true # 开启 LiveReload 功能（可选）
+      port: 35729 # LiveReload 服务端口
+
 --- #################### 数据库相关配置 ####################
 spring:
   autoconfigure:
@@ -48,7 +59,7 @@ spring:
       primary: master
       datasource:
         master:
-          url: jdbc:mysql://127.0.0.1:3306/ruoyi-vue-pro?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true # MySQL Connector/J 8.X 连接的示例
+          url: jdbc:mysql://127.0.0.1:3306/ruoyi_vue_pro?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true # MySQL Connector/J 8.X 连接的示例
           #          url: jdbc:mysql://127.0.0.1:3306/ruoyi-vue-pro?useSSL=true&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true # MySQL Connector/J 5.X 连接的示例
           #          url: jdbc:postgresql://127.0.0.1:5432/ruoyi-vue-pro # PostgreSQL 连接的示例
           #          url: jdbc:oracle:thin:@127.0.0.1:1521:xe # Oracle 连接的示例
