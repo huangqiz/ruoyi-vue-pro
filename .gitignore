@@ -53,3 +53,4 @@ application-my.yaml
 /yudao-ui-app/unpackage/
 **/.DS_Store
 nul
+yudao-server/LOG_FILE_IS_UNDEFINED

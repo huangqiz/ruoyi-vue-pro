@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             expressionLanguage="http://www.w3.org/1999/XPath"
+             targetNamespace="http://www.flowable.org/processdef">
+
+  <!-- 工单简单审批流程 (MVP版) -->
+  <process id="mes_production_order_simple" name="工单简单审批流程" isExecutable="true">
+
+    <!-- 开始事件 -->
+    <startEvent id="start" name="开始"/>
+
+    <!-- 用户任务1: 工单下达 -->
+    <userTask id="task_order_issue" name="工单下达" flowable:candidateUsers="1001">
+      <extensionElements>
+        <flowable:formProperty id="orderNo" name="工单号" type="string" required="true"/>
+        <flowable:formProperty id="materialCode" name="物料编码" type="string" required="true"/>
+        <flowable:formProperty id="processCode" name="工序代码" type="string" required="true"/>
+        <flowable:formProperty id="planQuantity" name="计划数量" type="long" required="true"/>
+        <flowable:formProperty id="priority" name="优先级" type="enum">
+          <flowable:value id="NORMAL" name="普通"/>
+          <flowable:value id="URGENT" name="紧急"/>
+        </flowable:formProperty>
+      </extensionElements>
+    </userTask>
+
+    <!-- 用户任务2: 工单审批 -->
+    <userTask id="task_order_approval" name="工单审批" flowable:candidateUsers="2001">
+      <extensionElements>
+        <flowable:formProperty id="approvalComment" name="审批意见" type="string"/>
+        <flowable:formProperty id="approvalDecision" name="审批决定" type="enum" required="true">
+          <flowable:value id="APPROVE" name="通过"/>
+          <flowable:value id="REJECT" name="拒绝"/>
+        </flowable:formProperty>
+      </extensionElements>
+    </userTask>
+
+    <!-- 用户任务3: 工单执行 -->
+    <userTask id="task_order_execute" name="工单执行" flowable:candidateUsers="3001">
+      <extensionElements>
+        <flowable:formProperty id="actualStartTime" name="实际开始时间" type="date" required="true"/>
+        <flowable:formProperty id="actualEndTime" name="实际结束时间" type="date"/>
+        <flowable:formProperty id="actualQuantity" name="实际产量" type="long"/>
+      </extensionElements>
+    </userTask>
+
+    <!-- 结束事件 -->
+    <endEvent id="end" name="完成"/>
+
+    <!-- ========== 流程连线 ========== -->
+
+    <!-- 开始 → 工单下达 -->
+    <sequenceFlow id="flow1" sourceRef="start" targetRef="task_order_issue"/>
+
+    <!-- 工单下达 → 工单审批 -->
+    <sequenceFlow id="flow2" sourceRef="task_order_issue" targetRef="task_order_approval"/>
+
+    <!-- 工单审批 → 工单执行 -->
+    <sequenceFlow id="flow3" sourceRef="task_order_approval" targetRef="task_order_execute"/>
+
+    <!-- 工单执行 → 完成 -->
+    <sequenceFlow id="flow4" sourceRef="task_order_execute" targetRef="end"/>
+
+  </process>
+
+  <!-- ========== BPMN图形布局信息 ========== -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_mes_production_order_simple">
+    <bpmndi:BPMNPlane bpmnElement="mes_production_order_simple" id="BPMNPlane_mes_production_order_simple">
+
+      <!-- 开始事件 -->
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="100.0" y="100.0"/>
+      </bpmndi:BPMNShape>
+
+      <!-- 工单下达 -->
+      <bpmndi:BPMNShape bpmnElement="task_order_issue" id="BPMNShape_task_order_issue">
+        <omgdc:Bounds height="80.0" width="100.0" x="200.0" y="75.0"/>
+      </bpmndi:BPMNShape>
+
+      <!-- 工单审批 -->
+      <bpmndi:BPMNShape bpmnElement="task_order_approval" id="BPMNShape_task_order_approval">
+        <omgdc:Bounds height="80.0" width="100.0" x="370.0" y="75.0"/>
+      </bpmndi:BPMNShape>
+
+      <!-- 工单执行 -->
+      <bpmndi:BPMNShape bpmnElement="task_order_execute" id="BPMNShape_task_order_execute">
+        <omgdc:Bounds height="80.0" width="100.0" x="540.0" y="75.0"/>
+      </bpmndi:BPMNShape>
+
+      <!-- 结束事件 -->
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="30.0" width="30.0" x="710.0" y="100.0"/>
+      </bpmndi:BPMNShape>
+
+      <!-- 连线 -->
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="130.0" y="115.0"/>
+        <omgdi:waypoint x="200.0" y="115.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="300.0" y="115.0"/>
+        <omgdi:waypoint x="370.0" y="115.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="470.0" y="115.0"/>
+        <omgdi:waypoint x="540.0" y="115.0"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="640.0" y="115.0"/>
+        <omgdi:waypoint x="710.0" y="115.0"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
