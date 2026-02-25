@@ -54,3 +54,5 @@ application-my.yaml
 **/.DS_Store
 nul
 yudao-server/LOG_FILE_IS_UNDEFINED
+
+yudao-framework/yudao-spring-boot-starter-biz-data-permission/bin/src/main/java/cn/iocoder/yudao/framework/datapermission/config/YudaoDataPermissionAutoConfiguration.class
